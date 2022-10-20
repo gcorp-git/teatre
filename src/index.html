@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <title></title>
+    <style>
+      body { display: block; margin: 0; padding: 0; position: relative }
+      ::-webkit-scrollbar { width: 0; height: 0 }
+      ::-webkit-scrollbar-track { -webkit-box-shadow: none }
+      ::-webkit-scrollbar-thumb { background: white; -webkit-box-shadow: none }
+      ::-webkit-scrollbar-thumb:window-inactive { background: none }
+    </style>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+    <script src="./bundle.js"></script>
+  </body>
+</html>
