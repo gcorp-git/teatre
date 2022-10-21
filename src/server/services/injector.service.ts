@@ -1,9 +1,9 @@
 import 'reflect-metadata'
-import { PROP, TYPE } from '../core/types'
+import { Meta, PROP, TYPE } from '../core/meta'
 import { Service } from '../decorators/service.decorator'
 import { IService } from '../decorators/service.model'
 
-export interface IConstructor {
+export interface IClass {
   new(...args: IService[]): IInjected
 }
 
@@ -15,32 +15,32 @@ export type IInjected = object & {
   static: true,
 })
 export class InjectorService {
-  private services = new Map<any, IService>()
+  private injected = new Map<any, IService>()
 
   constructor() {
-    this.services.set(this.constructor, this)
+    this.injected.set(InjectorService, this)
   }
 
-  inject<T = unknown>(Constructor: IConstructor): T {
-    if (Constructor[PROP.TYPE] !== TYPE.SERVICE) {
-      return this._inject(Constructor) as T
+  inject<T = unknown>(Class: IClass): T {
+    if (Meta.get(Class, PROP.TYPE) !== TYPE.SERVICE) {
+      return this._inject(Class) as T
     } else {
-      if (!Constructor[PROP.CONFIG]?.static) return this._inject(Constructor) as T
+      if (!Meta.get(Class, PROP.CONFIG)?.static) return this._inject(Class) as T
 
-      if (!this.services.has(Constructor)) {
-        this.services.set(Constructor, this._inject(Constructor))
+      if (!this.injected.has(Class)) {
+        this.injected.set(Class, this._inject(Class))
       }
   
-      return this.services.get(Constructor) as T
+      return this.injected.get(Class) as T
     }
   }
   
-  private _inject(Constructor: IConstructor): IInjected {
-    if (!Constructor[PROP.INJECTOR]) Constructor[PROP.INJECTOR] = this
+  private _inject(Class: IClass): IInjected {
+    if (!Meta.get(Class, PROP.INJECTOR)) Meta.set(Class, PROP.INJECTOR, this)
 
-    const dependencies = Reflect.getMetadata('design:paramtypes', Constructor) ?? []
+    const dependencies = Reflect.getMetadata('design:paramtypes', Class) ?? []
     const args = dependencies.map(Dependency => this.inject(Dependency))
     
-    return new Constructor(...args)
+    return new Class(...args)
   }
 }

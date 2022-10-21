@@ -15,7 +15,7 @@ class BarService {
 describe(`InjectorService`, () => {
   test(`injector.inject(InjectorService)`, () => {
     const injector = new InjectorService()
-    const injector2 = injector.inject(InjectorService)
+    const injector2 = injector.inject<InjectorService>(InjectorService)
     expect([injector === injector2]).toEqual([true])
   })
   test(`injector.inject(BarService)`, () => {

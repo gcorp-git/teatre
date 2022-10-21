@@ -1,11 +1,11 @@
-import { PROP, TYPE } from '../core/types'
+import { Meta, PROP, TYPE } from '../core/meta'
 import { IServiceClass } from './service.model'
 
 export function Service(config?: {
   static: boolean
 }) {
-  return function(constructor: IServiceClass) {
-    constructor[PROP.TYPE] = TYPE.SERVICE
-    constructor[PROP.CONFIG] = config || {}
+  return function(Class: IServiceClass) {
+    Meta.set(Class, PROP.TYPE, TYPE.SERVICE)
+    Meta.set(Class, PROP.CONFIG, config || {})
   }
 }

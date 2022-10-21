@@ -1,4 +1,4 @@
-import { PROP, TYPE } from '../core/types'
+import { Meta, PROP, TYPE } from '../core/meta'
 import { IScenarioClass } from './scenario.model'
 import { ScenarioClass } from './scenario.class'
 import { ISceneClass } from './scene.model'
@@ -11,9 +11,9 @@ export function Scenario(config?: {
   directors?: IDirectorClass[]
   actors?: IActorClass[]
 }) {
-  return function(constructor: IScenarioClass) {
-    constructor[PROP.TYPE] = TYPE.SCENARIO
-    constructor[PROP.CONFIG] = config || {}
+  return function(Class: IScenarioClass) {
+    Meta.set(Class, PROP.TYPE, TYPE.SCENARIO)
+    Meta.set(Class, PROP.CONFIG, config || {})
   }
 }
 

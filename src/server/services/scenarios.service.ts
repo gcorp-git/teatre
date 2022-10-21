@@ -1,6 +1,6 @@
 import { Service } from '../decorators/service.decorator'
 import { IScenario, IScenarioClass } from '../decorators/scenario.model'
-import { InjectorService, IConstructor } from './injector.service'
+import { InjectorService, IClass } from './injector.service'
 
 interface IStackItem {
   scenario: IScenario
@@ -73,7 +73,7 @@ export class ScenariosService {
 
   private _inject(ScenarioClass: IScenarioClass): IScenario {
     if (!this.injected.has(ScenarioClass)) {
-      const scenario = this.injector.inject<IScenario>(ScenarioClass as IConstructor)
+      const scenario = this.injector.inject<IScenario>(ScenarioClass as IClass)
 
       scenario.init()
 

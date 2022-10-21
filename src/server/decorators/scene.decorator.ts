@@ -1,4 +1,4 @@
-import { PROP, TYPE } from '../core/types'
+import { Meta, PROP, TYPE } from '../core/meta'
 import { ISceneClass } from './scene.model'
 import { SceneClass } from './scene.class'
 
@@ -8,9 +8,9 @@ export function Scene(config?: {
     integerCoordinates: boolean
   }
 }) {
-  return function(constructor: ISceneClass) {
-    constructor[PROP.TYPE] = TYPE.SCENE
-    constructor[PROP.CONFIG] = config || {}
+  return function(Class: ISceneClass) {
+    Meta.set(Class, PROP.TYPE, TYPE.SCENE)
+    Meta.set(Class, PROP.CONFIG, config || {})
   }
 }
 

@@ -1,9 +1,10 @@
-import { PROP } from '../core/types'
+import { Meta, PROP } from '../core/meta'
 import { IScenario } from './scenario.model'
 import { IScene } from './scene.model'
 import { IDirectorClass, IDirector } from './director.model'
 import { IActorClass, IActor } from './actor.model'
 import { ScenesService } from '../services/scenes.service'
+import { InjectorService } from '../services/injector.service'
 
 export class ScenarioClass implements IScenario {
   private _scene: IScene
@@ -13,9 +14,9 @@ export class ScenarioClass implements IScenario {
   private _isEnabled = false
 
   constructor() {
-    const config = this.constructor[PROP.CONFIG]
-    const injector = this.constructor[PROP.INJECTOR]
-    const scenes = injector.inject(ScenesService)
+    const config = Meta.get(this.constructor as any, PROP.CONFIG)
+    const injector = Meta.get(this.constructor as any, PROP.INJECTOR) as InjectorService
+    const scenes = injector.inject<ScenesService>(ScenesService)
 
     if (config?.scene) {
       this._scene = scenes.get(config.scene)

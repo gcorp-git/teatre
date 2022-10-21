@@ -1,5 +1,5 @@
 import { IScene } from './scene.model'
-import { PROP } from '../core/types'
+import { Meta, PROP } from '../core/meta'
 import { SceneObject } from '../services/stage/scene-object'
 import { StageSpace } from '../services/stage/space'
 import { Sprite } from '../services/stage/sprite'
@@ -12,7 +12,7 @@ export class SceneClass implements IScene {
   } = {}
 
   constructor() {
-    const config = this.constructor[PROP.CONFIG]
+    const config = Meta.get(this.constructor as any, PROP.CONFIG)
 
     this.options = { ...this.options, ...(config.options ?? {}) }
   }

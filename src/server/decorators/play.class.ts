@@ -1,13 +1,13 @@
 import { IPlay } from './play.model';
-import { PROP } from '../core/types';
+import { Meta, PROP } from '../core/meta';
 import { ScenariosService } from '../services/scenarios.service';
 
 export class PlayClass implements IPlay {
   private _scenarios: ScenariosService
 
   constructor() {
-    const config = this.constructor[PROP.CONFIG]
-    const injector = this.constructor[PROP.INJECTOR]
+    const config = Meta.get(this.constructor as any, PROP.CONFIG)
+    const injector = Meta.get(this.constructor as any, PROP.INJECTOR)
     
     this._scenarios = injector.inject(ScenariosService)
   }

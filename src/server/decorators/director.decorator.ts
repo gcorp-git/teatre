@@ -1,13 +1,13 @@
-import { PROP, TYPE } from '../core/types'
+import { Meta, PROP, TYPE } from '../core/meta'
 import { IDirectorClass } from './director.model'
 import { DirectorClass } from './director.class'
 
 export function Director(config?: {
   name?: string
 }) {
-  return function(constructor: IDirectorClass) {
-    constructor[PROP.TYPE] = TYPE.DIRECTOR
-    constructor[PROP.CONFIG] = config || {}
+  return function(Class: IDirectorClass) {
+    Meta.set(Class, PROP.TYPE, TYPE.DIRECTOR)
+    Meta.set(Class, PROP.CONFIG, config || {})
   }
 }
 

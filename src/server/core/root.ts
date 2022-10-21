@@ -1,6 +1,6 @@
 import { deepFreeze } from '../../utils/etc'
 import { ConfigService } from '../services/config.service'
-import { PROP } from './types'
+import { Meta, PROP } from './meta'
 import { IPlayClass, IPlay, IPlayConfig } from '../decorators/play.model'
 import { InjectorService } from '../services/injector.service'
 import { AssetsService } from '../services/assets.service'
@@ -37,7 +37,9 @@ export default class Root {
     api: IAPI
     win: any
   }) {
-    this.config = deepFreeze(Play[PROP.CONFIG])
+    const config = JSON.parse(JSON.stringify(Meta.get(Play, PROP.CONFIG)))
+
+    this.config = deepFreeze(config)
 
     ;(ConfigService as any).CONFIG = this.config
     ;(ClockService as any).FRAME = this.onFrame.bind(this)
