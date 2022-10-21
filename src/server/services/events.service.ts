@@ -11,15 +11,15 @@ export class EventsService {
     this.subs = new Subscriptions()
   }
 
-  on(event: string, listener: (...args: any[]) => void): void {
+  on(event: string, listener: (...args: any) => void): void {
 		this.subs.on(event, listener)
   }
 
-  off(event: string, listener: (...args: any[]) => void): void {
+  off(event: string, listener: (...args: any) => void): void {
     this.subs.off(event, listener)
   }
 
-  emit(event: string, ...args: any[]): void {
+  emit(event: string, ...args: any): void {
     this.subs.emit(event, ...args)
   }
 

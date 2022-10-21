@@ -1,4 +1,4 @@
-import { API } from './api'
+import { API, SYGNAL } from './api'
 import { ConfigService } from '../services/config.service'
 import { StageService } from '../services/stage.service'
 import { AssetsService } from '../services/assets.service'
@@ -21,7 +21,7 @@ enum STATUS {
   STOPPED,
 }
 
-export class Play {
+export class Root {
   private status = STATUS.STOPPED
   private api: API
   private state: IPlayState = {
@@ -73,7 +73,7 @@ export class Play {
   
       const events = this.controller.withdraw()
   
-      if (events.length) this.api.sendEventsUpdate(events)
+      if (events.length) this.api.send(SYGNAL.EVENTS_UPDATE, events)
     })
   }
 
@@ -82,7 +82,9 @@ export class Play {
 
     this.status = STATUS.STARTING
 
-    this.api.onInitConfig(config => {
+    let unsubscribe = this.api.on(SYGNAL.INIT_CONFIG, config => {
+      unsubscribe()
+
       this.config.update(config)
 
       this.state.$title.textContent = this.config.title
@@ -91,18 +93,18 @@ export class Play {
         const width = window.outerWidth
         const height = window.outerHeight
         
-        this.api.sendWindowResize({ width, height })
+        this.api.send(SYGNAL.WINDOW_RESIZE, { width, height })
       })
 
-      this.api.onStageRender(buffer => (this.state.buffer = buffer))
+      this.api.on(SYGNAL.STAGE_RENDER, buffer => (this.state.buffer = buffer))
 
-      this.api.onStageUpdate(stage => {
+      this.api.on(SYGNAL.STAGE_UPDATE, stage => {
         this.config.update({ stage })
         this.stage.update()
       })
 
       this.assets.load(this.config.assets).then(() => {
-        this.api.sendInitLoaded({
+        this.api.send(SYGNAL.INIT_LOADED, {
           images: this.assets.getImagesInfo(this.assets.images)
         })
   
@@ -113,7 +115,7 @@ export class Play {
       })
     })
 
-    this.api.sendInitReady()
+    this.api.send(SYGNAL.INIT_READY)
   }
 
   stop(): void {
@@ -122,7 +124,7 @@ export class Play {
     this.status = STATUS.STOPPING
 
     this.clock.stop()
-    this.api.unsubscribe()
+    this.api.reset()
     this.controller.destructor()
 
     this.status = STATUS.STOPPED

@@ -1,6 +1,6 @@
 import { Subscriptions } from '../../utils/subscriptions'
-import { IPlayConfig, IPlayConfigStage } from '../services/config.service'
-import { IItem } from '../services/renderer.service'
+import { IPlayConfig, IPlayConfigStage } from '../decorators/play.model'
+import { IItem } from '../services/stage/render/model'
 
 export interface IAPI {
   send: (sygnal: string, data?: any) => void
@@ -27,17 +27,17 @@ export class API {
     //
   }
 
-  send(sygnal: SYGNAL.INIT_READY): void;
-  send(sygnal: SYGNAL.INIT_LOADED, payload: { images: { width: number, height: number }[] }): void;
-  send(sygnal: SYGNAL.WINDOW_RESIZE, payload: { width: number, height: number }): void;
-  send(sygnal: SYGNAL.EVENTS_UPDATE, payload: [event: string, payload: any][]): void;
+  send(sygnal: SYGNAL.INIT_CONFIG, payload: IPlayConfig): void;
+  send(sygnal: SYGNAL.STAGE_RENDER, payload: IItem[]): void;
+  send(sygnal: SYGNAL.STAGE_UPDATE, payload: IPlayConfigStage): void;
   send(sygnal: SYGNAL, payload?: any): void {
     this.api.send(sygnal, payload)
   }
 
-  on(sygnal: SYGNAL.INIT_CONFIG, f: (config: IPlayConfig) => void): () => void;
-  on(sygnal: SYGNAL.STAGE_RENDER, f: (buffer: IItem[]) => void): () => void;
-  on(sygnal: SYGNAL.STAGE_UPDATE, f: (stage: IPlayConfigStage) => void): () => void;
+  on(sygnal: SYGNAL.INIT_READY, f: () => void): () => void;
+  on(sygnal: SYGNAL.INIT_LOADED, f: (data: { images: { width: number, height: number }[] }) => void): () => void;
+  on(sygnal: SYGNAL.WINDOW_RESIZE, f: () => void): () => void;
+  on(sygnal: SYGNAL.EVENTS_UPDATE, f: (events: [ event: string, payload?: any][]) => void): () => void;
   on(sygnal: SYGNAL, f: (...args: any) => void): () => void {
     const listener: Listener = (event, data) => f(data)
 

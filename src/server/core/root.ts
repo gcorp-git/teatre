@@ -7,32 +7,37 @@ import { AssetsService } from '../services/assets.service'
 import { ClockService } from '../services/clock.service'
 import { EventsService } from '../services/events.service'
 import { StageService } from '../services/stage.service'
-import { Subscriptions } from '../../utils/subscriptions'
+import { API, IAPI, SYGNAL } from './api'
 
-type Listener = (event: string, data: any) => void
-
-interface IState {
-  window: any,
-  on: (channel: string, listener: Listener) => void
-  off: (channel: string, listener: Listener) => void
-  send: (channel: string, data: any) => void
-  ready: () => void
+enum STATUS {
+  STARTING,
+  WORKING,
+  STOPPING,
+  STOPPED,
 }
 
 export default class Root {
+  private status = STATUS.STOPPED
+  private api: API
+  private win: any
+  private play: IPlay
   private config: IPlayConfig
   private injector: InjectorService
   private assets: AssetsService
   private clock: ClockService
   private events: EventsService
   private stage: StageService
-  private play: IPlay
-  private state: IState
-  private started = false
-  private subs: Subscriptions
 
-  constructor(PlayClass: IPlayClass, state: IState) {
-    this.config = deepFreeze(PlayClass[PROP.CONFIG])
+  private _ready: (Root) => void
+  private _createPlayInstance: () => IPlay
+
+  constructor({ Play, ready, api, win }: {
+    Play: IPlayClass
+    ready: () => void
+    api: IAPI
+    win: any
+  }) {
+    this.config = deepFreeze(Play[PROP.CONFIG])
 
     ;(ConfigService as any).CONFIG = this.config
     ;(ClockService as any).FRAME = this.onFrame.bind(this)
@@ -43,11 +48,22 @@ export default class Root {
     this.events = this.injector.inject<EventsService>(EventsService)
     this.stage = this.injector.inject<StageService>(StageService)
 
-    this.state = state
+    this.api = new API(api)
+    this.win = win
+    this._ready = ready
+    this._createPlayInstance = () => this.injector.inject<IPlay>(Play)
     
-    this.subs = new Subscriptions()
+    this._ready(this)
+  }
 
-    this.subscribe('init:ready', (event, data) => {
+  start(): void {
+    if (this.status !== STATUS.STOPPED) return
+
+    this.status = STATUS.STARTING
+
+    // todo: @fix - client and server exchange same assets again after .stop() -> .start() being called
+    
+    this.api.on(SYGNAL.INIT_READY, () => {
       const config = this.config
 
       this.stage.width = config.stage?.width
@@ -57,48 +73,39 @@ export default class Root {
       this.stage.cursor = config.stage?.cursor
       this.stage.updated = false
 
-      this.state.send('init:config', config)
+      this.api.send(SYGNAL.INIT_CONFIG, config)
     })
 
-    this.subscribe('init:loaded', (event, data) => {
-      this.assets.init(data)
-      this.play = this.injector.inject<IPlay>(PlayClass)
-      this.start()
+    this.api.on(SYGNAL.INIT_LOADED, assets => {
+      this.assets.init(assets)
+
+      if (!this.play) this.play = this._createPlayInstance()
+
+      this.clock.start()
     })
 
-    this.subscribe('window:resize', (event, data) => {
-      // todo: handle on-window-resize event
-    })
-
-    this.subscribe('events:update', (event, data) => {
-      for (const [event, payload] of data) {
+    this.api.on(SYGNAL.EVENTS_UPDATE, events => {
+      for (const [event, payload] of events) {
         this.events.emit(event, payload)
       }
     })
 
-    this.state.ready()
-  }
+    this.api.on(SYGNAL.WINDOW_RESIZE, () => {
+      // todo: handle window-resize event
+    })
 
-  start(): void {
-    if (this.started) return
-
-    this.started = true
-
-    this.clock.start()
+    this.status = STATUS.WORKING
   }
 
   stop(): void {
-    if (!this.started) return
+    if (this.status !== STATUS.WORKING) return
 
-    this.started = false
+    this.status = STATUS.STOPPING
 
     this.clock.stop()
+    this.api.reset()
 
-    this.subs.events.forEach(event => {
-      this.subs.each(event, subscriber => this.state.off(event, subscriber))
-    })
-
-    this.subs.clear()
+    this.status = STATUS.STOPPED
   }
 
   onFrame(delta: number): void {
@@ -106,13 +113,13 @@ export default class Root {
 
     if (this.play?.onFrame) this.play.onFrame(delta)
 
-    this.state.send('stage:render', this.stage.camera.render().map(ri => ri.serialize()))
+    this.api.send(SYGNAL.STAGE_RENDER, this.stage.camera.render().map(ri => ri.serialize()))
   }
 
   onUpdate(): void {
     this.stage.updated = false
 
-    this.state.send('stage:update', {
+    this.api.send(SYGNAL.STAGE_UPDATE, {
       width: this.stage.width,
       height: this.stage.height,
       scale: this.stage.scale,
@@ -123,13 +130,8 @@ export default class Root {
     const width = this.stage.scale * this.stage.width
     const height = this.stage.scale * this.stage.height
 
-    this.state.window.setSize(width, height)
+    this.win.setSize(width, height)
 
     if (this.play?.onUpdate) this.play.onUpdate()
-  }
-
-  subscribe(event: string, subscriber: (...args: any[]) => void): void {
-    this.subs.on(event, subscriber)
-    this.state.on(event, subscriber)
   }
 }

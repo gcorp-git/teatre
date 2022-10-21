@@ -1,5 +1,5 @@
 import { API, IAPI } from './client/core/api'
-import { Play } from './client/core/play'
+import { Root } from './client/core/root'
 
 declare global {
   interface Window {
@@ -7,9 +7,9 @@ declare global {
   }
 }
 
-const play = new Play({
+const root = new Root({
   selector: '#app',
   api: new API(window.api),
 })
 
-play.start()
+root.start()

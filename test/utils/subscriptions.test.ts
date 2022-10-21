@@ -12,7 +12,7 @@ describe(`Subscriptions`, () => {
     results: [0, 0, 0],
   }
   test(`empty`, () => {
-    expect(STATE.subs.events).toEqual([])
+    expect(STATE.subs.names).toEqual([])
   })
   test(`.on(undefined, ...)`, () => {
     expect(() => STATE.subs.on(undefined, () => 0)).toThrow(ERROR.INCORRECT_EVENT_NAME)
@@ -22,15 +22,15 @@ describe(`Subscriptions`, () => {
   })
   test(`.on('click', ...) #0`, () => {
     STATE.subs.on(STATE.listeners[0].event, STATE.listeners[0].listener)
-    expect(STATE.subs.events).toEqual(['click'])
+    expect(STATE.subs.names).toEqual(['click'])
   })
   test(`.on('click', ...) #1`, () => {
     STATE.subs.on(STATE.listeners[1].event, STATE.listeners[1].listener)
-    expect(STATE.subs.events).toEqual(['click'])
+    expect(STATE.subs.names).toEqual(['click'])
   })
   test(`.on('focus', ...) #2`, () => {
     STATE.subs.on(STATE.listeners[2].event, STATE.listeners[2].listener)
-    expect(STATE.subs.events).toEqual(['click', 'focus'])
+    expect(STATE.subs.names).toEqual(['click', 'focus'])
   })
   test(`.off(undefined, ...)`, () => {
     expect(() => STATE.subs.off(undefined, () => 0)).toThrow(ERROR.INCORRECT_EVENT_NAME)
@@ -40,15 +40,15 @@ describe(`Subscriptions`, () => {
   })
   test(`.off('click', ...) #0`, () => {
     STATE.subs.off(STATE.listeners[0].event, STATE.listeners[0].listener)
-    expect(STATE.subs.events).toEqual(['click', 'focus'])
+    expect(STATE.subs.names).toEqual(['click', 'focus'])
   })
   test(`.off('click', ...) #1`, () => {
     STATE.subs.off(STATE.listeners[1].event, STATE.listeners[1].listener)
-    expect(STATE.subs.events).toEqual(['focus'])
+    expect(STATE.subs.names).toEqual(['focus'])
   })
   test(`.off('focus', ...) #2`, () => {
     STATE.subs.off(STATE.listeners[2].event, STATE.listeners[2].listener)
-    expect(STATE.subs.events).toEqual([])
+    expect(STATE.subs.names).toEqual([])
   })
   test(`.clear('')`, () => {
     expect(() => STATE.subs.clear('')).toThrow(ERROR.INCORRECT_EVENT_NAME)
@@ -58,28 +58,28 @@ describe(`Subscriptions`, () => {
     STATE.subs.on(STATE.listeners[1].event, STATE.listeners[1].listener)
     STATE.subs.on(STATE.listeners[2].event, STATE.listeners[2].listener)
     STATE.subs.clear('click')
-    expect(STATE.subs.events).toEqual(['focus'])
+    expect(STATE.subs.names).toEqual(['focus'])
   })
   test(`.clear('focus')`, () => {
     STATE.subs.on(STATE.listeners[0].event, STATE.listeners[0].listener)
     STATE.subs.on(STATE.listeners[1].event, STATE.listeners[1].listener)
     STATE.subs.on(STATE.listeners[2].event, STATE.listeners[2].listener)
     STATE.subs.clear('focus')
-    expect(STATE.subs.events).toEqual(['click'])
+    expect(STATE.subs.names).toEqual(['click'])
   })
   test(`.clear('blur')`, () => {
     STATE.subs.on(STATE.listeners[0].event, STATE.listeners[0].listener)
     STATE.subs.on(STATE.listeners[1].event, STATE.listeners[1].listener)
     STATE.subs.on(STATE.listeners[2].event, STATE.listeners[2].listener)
     STATE.subs.clear('blur')
-    expect(STATE.subs.events).toEqual(['click', 'focus'])
+    expect(STATE.subs.names).toEqual(['click', 'focus'])
   })
   test(`.clear()`, () => {
     STATE.subs.on(STATE.listeners[0].event, STATE.listeners[0].listener)
     STATE.subs.on(STATE.listeners[1].event, STATE.listeners[1].listener)
     STATE.subs.on(STATE.listeners[2].event, STATE.listeners[2].listener)
     STATE.subs.clear()
-    expect(STATE.subs.events).toEqual([])
+    expect(STATE.subs.names).toEqual([])
   })
   test(`.emit(undefined, ...)`, () => {
     expect(() => STATE.subs.emit(undefined, 0)).toThrow(ERROR.INCORRECT_EVENT_NAME)

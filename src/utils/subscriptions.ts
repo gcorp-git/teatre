@@ -2,10 +2,10 @@ export const ERROR = {
   INCORRECT_EVENT_NAME: 'INCORRECT_EVENT_NAME',
 }
 
-export class Subscriptions<T extends (...args: any[]) => void = (...args: any[]) => void> {
+export class Subscriptions<T extends (...args: any) => void = (...args: any) => void> {
   private map: { [event: string]: Set<T> } = {}
 
-  get events(): string[] {
+  get names(): string[] {
     return Object.keys(this.map)
   }
 
@@ -35,7 +35,7 @@ export class Subscriptions<T extends (...args: any[]) => void = (...args: any[])
 		}
   }
 
-  emit(event: string, ...args: any[]): void {
+  emit(event: string, ...args: any): void {
     if (!event) throw ERROR.INCORRECT_EVENT_NAME
     if (!this.map[event]) return
 

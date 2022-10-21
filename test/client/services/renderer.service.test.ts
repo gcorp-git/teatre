@@ -5,7 +5,7 @@ import { ERROR, IDraft, RendererService, TYPE } from '../../../src/client/servic
 function createProxy(name: string, logs: any[]): unknown {
   return new Proxy({}, {
     get(target, prop, receiver) {
-      return (...args: any[]) => logs.push([name, 'call', prop, args])
+      return (...args: any) => logs.push([name, 'call', prop, args])
     },
     set(target, prop, value, receiver) {
       logs.push([name, 'set', prop, value])
