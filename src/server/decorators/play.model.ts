@@ -1,3 +1,4 @@
+import { ScenariosService } from '../services/scenarios.service'
 import { IService } from './service.model'
 
 export type IPlayConfigTitle = string
@@ -25,6 +26,15 @@ export interface IPlayClass {
 }
 
 export type IPlay = object & {
-  onFrame?: (delta: number) => void
-  onUpdate?: () => void
+  scenarios: ScenariosService
+
+  init(): void
+  frame(delta: number): void
+  update(): void
+  destroy(): void
+
+  onInit(): void
+  onFrame(delta: number): void
+  onUpdate(): void
+  onDestroy(): void
 }

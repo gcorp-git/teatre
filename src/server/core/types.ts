@@ -1,6 +1,7 @@
 export const PROP = {
   TYPE: Symbol(),
   CONFIG: Symbol(),
+  INJECTOR: Symbol(),
 }
 
 export enum TYPE {
@@ -8,4 +9,6 @@ export enum TYPE {
   PLAY,
   SCENE,
   SCENARIO,
+  DIRECTOR,
+  ACTOR,
 }

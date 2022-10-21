@@ -4,6 +4,9 @@ import { SceneClass } from './scene.class'
 
 export function Scene(config?: {
   name?: string
+  options?: {
+    integerCoordinates: boolean
+  }
 }) {
   return function(constructor: ISceneClass) {
     constructor[PROP.TYPE] = TYPE.SCENE

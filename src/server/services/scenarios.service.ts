@@ -1,6 +1,6 @@
 import { Service } from '../decorators/service.decorator'
 import { IScenario, IScenarioClass } from '../decorators/scenario.model'
-import { InjectorService, IInjectableClass } from './injector.service'
+import { InjectorService, IConstructor } from './injector.service'
 
 interface IStackItem {
   scenario: IScenario
@@ -62,9 +62,20 @@ export class ScenariosService {
     if (current) current.scenario?.onEnable(data)
   }
 
+  reset(): void {
+    for (const [ScenarioClass, scenario] of this.injected) {
+      scenario.destroy()
+    }
+
+    this.injected.clear()
+    this.stack = []
+  }
+
   private _inject(ScenarioClass: IScenarioClass): IScenario {
     if (!this.injected.has(ScenarioClass)) {
-      const scenario = this.injector.inject<IScenario>(ScenarioClass as IInjectableClass)
+      const scenario = this.injector.inject<IScenario>(ScenarioClass as IConstructor)
+
+      scenario.init()
 
       this.injected.set(ScenarioClass, scenario)
     }

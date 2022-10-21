@@ -81,6 +81,7 @@ export default class Root {
 
       if (!this.play) this.play = this._createPlayInstance()
 
+      this.play.init()
       this.clock.start()
     })
 
@@ -104,6 +105,7 @@ export default class Root {
 
     this.clock.stop()
     this.api.reset()
+    this.play.destroy()
 
     this.status = STATUS.STOPPED
   }
@@ -111,7 +113,7 @@ export default class Root {
   onFrame(delta: number): void {
     if (this.stage.updated) this.onUpdate()
 
-    if (this.play?.onFrame) this.play.onFrame(delta)
+    this.play.frame(delta)
 
     this.api.send(SYGNAL.STAGE_RENDER, this.stage.camera.render().map(ri => ri.serialize()))
   }
@@ -132,6 +134,6 @@ export default class Root {
 
     this.win.setSize(width, height)
 
-    if (this.play?.onUpdate) this.play.onUpdate()
+    this.play.update()
   }
 }

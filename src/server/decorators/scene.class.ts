@@ -1,23 +1,28 @@
 import { IScene } from './scene.model'
+import { PROP } from '../core/types'
 import { SceneObject } from '../services/stage/scene-object'
 import { StageSpace } from '../services/stage/space'
 import { Sprite } from '../services/stage/sprite'
 import { Builder } from '../services/stage/render/builder'
 
-interface ISceneClassOptions {
-  integerCoordinates?: boolean
-}
-
 export class SceneClass implements IScene {
   private objects = new Set<SceneObject>()
-  private options: ISceneClassOptions = {}
+  private options: {
+    integerCoordinates?: boolean
+  } = {}
 
-  constructor(options: ISceneClassOptions = {}) {
-    this.options.integerCoordinates = options.integerCoordinates ?? false
+  constructor() {
+    const config = this.constructor[PROP.CONFIG]
+
+    this.options = { ...this.options, ...(config.options ?? {}) }
   }
 
-  set integerCoordinates(value: boolean) {
-    this.options.integerCoordinates = value
+  init(): void {
+    this.onInit()
+  }
+
+  destroy(): void {
+    this.onDestroy()
   }
 
   has(o: SceneObject): boolean {
@@ -79,4 +84,7 @@ export class SceneClass implements IScene {
 
     return items
   }
+
+  onInit(): void {}
+  onDestroy(): void {}
 }

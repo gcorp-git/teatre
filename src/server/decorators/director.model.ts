@@ -1,22 +1,24 @@
 import { IService } from './service.model'
+import { IScenario } from './scenario.model'
 import { IScene } from './scene.model'
 
-export interface IScenarioClass {
-  new(...args: IService[]): IScenario
+export interface IDirectorClass {
+  new(...args: IService[]): IDirector
 }
 
-export interface IScenario {
+export interface IDirector {
+  scenario: IScenario
   scene: IScene
 
-  init(): void
-  enable(data: any): void
+  init(scenario: IScenario): void
+  enable(): void
   disable(): void
   frame(delta: number): void
   update(): void
   destroy(): void
   
   onInit(): void
-  onEnable(data: any): void
+  onEnable(): void
   onDisable(): void
   onFrame(delta: number): void
   onUpdate(): void
