@@ -1,7 +1,7 @@
 import { DOMListener } from '../../utils/dom-listener'
 import { ConfigService } from './config.service'
 
-export class ControllerService {
+export class EventsService {
 	private $canvas: HTMLCanvasElement
 	private config: ConfigService
 	private listener: DOMListener

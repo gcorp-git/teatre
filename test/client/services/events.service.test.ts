@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import P from '../../aid/prime-numbers'
 import { DOMListener } from '../../../src/utils/dom-listener'
-import { ControllerService } from '../../../src/client/services/controller.service'
+import { EventsService } from '../../../src/client/services/events.service'
 import { ConfigService } from '../../../src/client/services/config.service'
 
 const $canvas = {
@@ -20,11 +20,11 @@ global.document = {
   removeEventListener: (event: string, listener: (e: any) => void, options: any): void => void 0,
 } as any
 
-describe(`ControllerService`, () => {
+describe(`EventsService`, () => {
   test(`#0`, () => {
     const config = new ConfigService()
     const listener = new DOMListener()
-    const service = new ControllerService({ $canvas, config, listener })
+    const service = new EventsService({ $canvas, config, listener })
 
     listener.emit(document, 'mousedown', { clientX: P[0], clientY: P[1] })
     listener.emit(document, 'mouseup', { clientX: P[2], clientY: P[3] })
