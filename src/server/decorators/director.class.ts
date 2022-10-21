@@ -5,10 +5,6 @@ export class DirectorClass implements IDirector {
   private _isEnabled = false
   private _scenario: IScenario
 
-  get scene() {
-    return this._scenario.scene
-  }
-
   init(scenario: IScenario): void {
     this.onInit(scenario)
   }

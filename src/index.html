@@ -6,7 +6,10 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <title></title>
     <style>
+      html { box-sizing: border-box }
       body { display: block; margin: 0; padding: 0; position: relative }
+      canvas#app { border: none }
+      *, *:before, *:after { box-sizing: inherit }
       ::-webkit-scrollbar { width: 0; height: 0 }
       ::-webkit-scrollbar-track { -webkit-box-shadow: none }
       ::-webkit-scrollbar-thumb { background: white; -webkit-box-shadow: none }

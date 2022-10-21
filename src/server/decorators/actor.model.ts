@@ -7,8 +7,6 @@ export interface IActorClass {
 }
 
 export interface IActor {
-  scene: IScene
-
   init(scenario: IScenario): void
   enable(): void
   disable(): void

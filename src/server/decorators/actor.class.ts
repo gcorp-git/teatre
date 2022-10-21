@@ -5,10 +5,6 @@ export class ActorClass implements IActor {
   private _isEnabled = false
   private _scenario: IScenario
 
-  get scene() {
-    return this._scenario.scene
-  }
-
   init(scenario: IScenario): void {
     this._scenario = scenario
 

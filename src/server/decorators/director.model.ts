@@ -7,8 +7,6 @@ export interface IDirectorClass {
 }
 
 export interface IDirector {
-  scene: IScene
-
   init(scenario: IScenario): void
   enable(): void
   disable(): void
