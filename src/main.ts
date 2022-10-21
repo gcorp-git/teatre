@@ -3,13 +3,13 @@ import { Root } from './client/core/root'
 
 declare global {
   interface Window {
-    api: IAPI
+    getAPIOnce: () => IAPI
   }
 }
 
 const root = new Root({
   selector: '#app',
-  api: new API(window.api),
+  api: new API(window.getAPIOnce()),
 })
 
 root.start()
