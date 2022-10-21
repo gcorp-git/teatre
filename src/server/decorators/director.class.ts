@@ -2,22 +2,15 @@ import { IDirector } from './director.model';
 import { IScenario } from './scenario.model';
 
 export class DirectorClass implements IDirector {
+  private _isEnabled = false
   private _scenario: IScenario
-
-  private _isEnabled = true
-
-  get scenario() {
-    return this._scenario
-  }
 
   get scene() {
     return this._scenario.scene
   }
 
   init(scenario: IScenario): void {
-    this._scenario = scenario
-
-    this.onInit()
+    this.onInit(scenario)
   }
 
   enable(): void {
@@ -54,7 +47,7 @@ export class DirectorClass implements IDirector {
     this.onDestroy()
   }
 
-  onInit(): void {}
+  onInit(scenario: IScenario): void {}
   onEnable(): void {}
   onDisable(): void {}
   onFrame(delta: number): void {}

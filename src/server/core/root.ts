@@ -73,6 +73,11 @@ export default class Root {
       this.stage.cursor = config.stage?.cursor
       this.stage.updated = false
 
+      const width = this.stage.scale * this.stage.width
+      const height = this.stage.scale * this.stage.height
+  
+      this.win.setSize(width, height)
+
       this.api.send(SYGNAL.INIT_CONFIG, config)
     })
 
@@ -87,7 +92,7 @@ export default class Root {
 
     this.api.on(SYGNAL.EVENTS_UPDATE, events => {
       for (const [event, payload] of events) {
-        this.events.emit(event, payload)
+        this.events.emit(event as any, payload)
       }
     })
 

@@ -1,6 +1,12 @@
 export type DeepPartial<T> = T extends object ? {
-  [P in keyof T]?: DeepPartial<T[P]>;
-} : T;
+  [P in keyof T]?: DeepPartial<T[P]>
+} : T
+
+export function ring(min: number, value: number, max: number): number {
+	const size = max - min
+
+	return min + ((value % size + size) % size)
+}
 
 export function deepFreeze(o: unknown): unknown {
   Object.freeze(o)

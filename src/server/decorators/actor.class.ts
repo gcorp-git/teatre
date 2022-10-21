@@ -2,13 +2,8 @@ import { IActor } from './actor.model';
 import { IScenario } from './scenario.model';
 
 export class ActorClass implements IActor {
+  private _isEnabled = false
   private _scenario: IScenario
-
-  private _isEnabled = true
-
-  get scenario() {
-    return this._scenario
-  }
 
   get scene() {
     return this._scenario.scene
@@ -17,7 +12,7 @@ export class ActorClass implements IActor {
   init(scenario: IScenario): void {
     this._scenario = scenario
 
-    this.onInit()
+    this.onInit(scenario)
   }
 
   enable(): void {
@@ -54,7 +49,7 @@ export class ActorClass implements IActor {
     this.onDestroy()
   }
 
-  onInit(): void {}
+  onInit(scenario: IScenario): void {}
   onEnable(): void {}
   onDisable(): void {}
   onFrame(delta: number): void {}

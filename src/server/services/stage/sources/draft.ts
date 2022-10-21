@@ -36,6 +36,14 @@ export class DraftSource implements ISpriteSource {
     this.buffer.push(['fillRect', [x, y, width, height]])
   }
 
+  save(): void {
+    this.buffer.push(['save', []])
+  }
+
+  restore(): void {
+    this.buffer.push(['restore', []])
+  }
+
   clearRect(x: number, y: number, width: number, height: number): void {
     if (x <= 0 && y <= 0 && width >= this.width && height >= this.height) {
       this.clear()

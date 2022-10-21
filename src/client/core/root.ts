@@ -2,7 +2,7 @@ import { API, SYGNAL } from './api'
 import { ConfigService } from '../services/config.service'
 import { StageService } from '../services/stage.service'
 import { AssetsService } from '../services/assets.service'
-import { ControllerService } from '../services/controller.service'
+import { EventsService } from '../services/events.service'
 import { RendererService, IDraft, IItem } from '../services/renderer.service'
 import { ClockService } from '../services/clock.service'
 
@@ -38,7 +38,7 @@ export class Root {
   private stage: StageService
   private assets: AssetsService
   private renderer: RendererService
-  private controller: ControllerService
+  private events: EventsService
   private clock: ClockService
 
   constructor({ selector, api }: {
@@ -57,7 +57,7 @@ export class Root {
     })
     this.assets = new AssetsService()
     this.renderer = new RendererService()
-    this.controller = new ControllerService({
+    this.events = new EventsService({
       $canvas: this.state.$canvas,
       config: this.config,
     })
@@ -71,7 +71,7 @@ export class Root {
         draft: this.state.draft,
       })
   
-      const events = this.controller.withdraw()
+      const events = this.events.withdraw()
   
       if (events.length) this.api.send(SYGNAL.EVENTS_UPDATE, events)
     })
@@ -86,6 +86,7 @@ export class Root {
       unsubscribe()
 
       this.config.update(config)
+      this.stage.update()
 
       this.state.$title.textContent = this.config.title
 
@@ -108,7 +109,7 @@ export class Root {
           images: this.assets.getImagesInfo(this.assets.images)
         })
   
-        this.controller.enable()
+        this.events.enable()
         this.clock.start()
   
         this.status = STATUS.WORKING
@@ -125,7 +126,7 @@ export class Root {
 
     this.clock.stop()
     this.api.reset()
-    this.controller.destructor()
+    this.events.destructor()
 
     this.status = STATUS.STOPPED
   }

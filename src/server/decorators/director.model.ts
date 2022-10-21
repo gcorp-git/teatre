@@ -7,7 +7,6 @@ export interface IDirectorClass {
 }
 
 export interface IDirector {
-  scenario: IScenario
   scene: IScene
 
   init(scenario: IScenario): void
@@ -17,7 +16,7 @@ export interface IDirector {
   update(): void
   destroy(): void
   
-  onInit(): void
+  onInit(scenario: IScenario): void
   onEnable(): void
   onDisable(): void
   onFrame(delta: number): void
