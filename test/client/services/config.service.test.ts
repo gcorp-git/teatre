@@ -24,6 +24,12 @@ describe(`ConfigService`, () => {
     logs.push(service.assets)
     service.assets = { images: ['test.png'] }
     logs.push(service.assets)
+    service.update({ title: 'test-update' })
+    logs.push(service.title)
+    service.update({ stage: { scale: 3, smoothing: false, cursor: 'crosshair' } })
+    logs.push(service.stage)
+    service.assets = { images: ['test.png', 'update.png'] }
+    logs.push(service.assets)
     logs.push(Object.isFrozen(service.title))
     logs.push(Object.isFrozen(service.stage))
     logs.push(Object.isFrozen(service.assets))
@@ -42,6 +48,9 @@ describe(`ConfigService`, () => {
       { width: 320, height: 240, scale: 2, smoothing: true, cursor: 'pointer' },
       { images: [] },
       { images: ['test.png'] },
+      'test-update',
+      { width: 320, height: 240, scale: 3, smoothing: false, cursor: 'crosshair' },
+      { images: ['test.png', 'update.png'] },
       true,
       true,
       true,

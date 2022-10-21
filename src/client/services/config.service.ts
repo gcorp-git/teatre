@@ -1,4 +1,4 @@
-import { deepFreeze } from '../../utils/etc'
+import { deepFreeze, DeepPartial } from '../../utils/etc'
 
 export interface IPlayConfig {
   title: IPlayConfigTitle
@@ -73,12 +73,14 @@ export class ConfigService {
     this._cache()
   }
 
-  update(data: Partial<IPlayConfig>): void {
+  update(data: DeepPartial<IPlayConfig>): void {
     if (data === undefined) return
 
     if (data.title !== undefined) this._setTitle(data.title)
     if (data.stage !== undefined) this._setStage(data.stage)
     if (data.assets !== undefined) this._setAssets(data.assets)
+
+    this._cache()
   }
 
   private _setTitle(title: IPlayConfigTitle): void {
