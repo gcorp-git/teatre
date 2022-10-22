@@ -7,7 +7,7 @@ export class ClipSource implements ISpriteSource {
   width: number
   height: number
 
-	constructor(args: {
+  constructor(args: {
     animation: StageAnimation<ISpriteSource>
     width?: number
     height?: number
@@ -15,11 +15,11 @@ export class ClipSource implements ISpriteSource {
     this.animation = args.animation
     this.width = args.width ?? 0
     this.height = args.height ?? 0
-	}
+  }
   
-	render(): Builder<unknown> {
+  render(): Builder<unknown> {
     if (!this.animation) return undefined
 
     return this.animation.current.render()
-	}
+  }
 }

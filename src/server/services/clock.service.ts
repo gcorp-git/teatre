@@ -19,12 +19,12 @@ export class ClockService {
     return this._passed
   }
   
-	start(): void {
-		if (this.started) return
+  start(): void {
+    if (this.started) return
 
-		this.started = true
+    this.started = true
 
-		this.lastAt = BigInt(0)
+    this.lastAt = BigInt(0)
 
     const frame = () => {
       if (!this.started) return
@@ -44,15 +44,15 @@ export class ClockService {
     }
 
     TURBO ? setImmediate(frame) : setTimeout(frame, 0)
-	}
+  }
 
-	stop(): void {
-		if (!this.started) return
+  stop(): void {
+    if (!this.started) return
 
-		this.started = false
+    this.started = false
     
     delete this.startedAt
     delete this.lastAt
     delete this._passed
-	}
+  }
 }

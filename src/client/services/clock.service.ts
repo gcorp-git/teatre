@@ -9,17 +9,17 @@ export class ClockService {
   }
 
   get passed(): number | undefined {
-		if (!this.started) return undefined
+    if (!this.started) return undefined
     
     return this._passed
   }
   
-	start(): void {
-		if (this.started) return
+  start(): void {
+    if (this.started) return
 
-		this.started = true
+    this.started = true
 
-		this.lastAt = 0
+    this.lastAt = 0
 
     const frame = (timestamp: number) => {
       if (!this.started) return
@@ -39,14 +39,14 @@ export class ClockService {
     }
 
     window.requestAnimationFrame(frame)
-	}
+  }
 
-	stop(): void {
-		if (!this.started) return
+  stop(): void {
+    if (!this.started) return
 
-		this.started = false
+    this.started = false
     this.startedAt = 0
     this.lastAt = 0
     this._passed = 0
-	}
+  }
 }

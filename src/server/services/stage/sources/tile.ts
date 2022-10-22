@@ -9,7 +9,7 @@ export class TileSource implements ISpriteSource {
   width: number
   height: number
 
-	constructor(args: {
+  constructor(args: {
     image: AssetsImage
     dx?: number
     dy?: number
@@ -21,14 +21,14 @@ export class TileSource implements ISpriteSource {
     this.dy = args.dy ?? 0
     this.width = args.width ?? this.image?.width
     this.height = args.height ?? this.image?.height
-	}
+  }
   
-	render(): ImageBuilder {
+  render(): ImageBuilder {
     if (!this.image) return undefined
 
     return new ImageBuilder({
       data: this.image,
       src: [this.dx, this.dy, this.width, this.height],
     })
-	}
+  }
 }

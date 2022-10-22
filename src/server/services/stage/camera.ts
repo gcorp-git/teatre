@@ -25,9 +25,9 @@ export class Camera {
 
   get center(): { x: number, y: number } {
     return {
-			x: this.x + this.width / 2,
-			y: this.y + this.height / 2,
-		}
+      x: this.x + this.width / 2,
+      y: this.y + this.height / 2,
+    }
   }
 
   attach(scene: IScene): void {
@@ -44,19 +44,19 @@ export class Camera {
       this.y = y ?? this.y
     } else {
       this.x = x !== undefined ? x - this.width / 2 : this.x
-		  this.y = y !== undefined ? y - this.height / 2 : this.y
+      this.y = y !== undefined ? y - this.height / 2 : this.y
     }
   }
   
-	move(dx = 0, dy = 0): void {
-		this.x += dx
-		this.y += dy
-	}
+  move(dx = 0, dy = 0): void {
+    this.x += dx
+    this.y += dy
+  }
   
-	resize(width: number, height: number): void {
-		this.width = width ?? this.width
-		this.height = height ?? this.height
-	}
+  resize(width: number, height: number): void {
+    this.width = width ?? this.width
+    this.height = height ?? this.height
+  }
 
   render(): Builder<unknown>[] {
     if (this.isRendering) return this.buffer

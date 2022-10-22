@@ -1,6 +1,6 @@
-import { Service } from '../decorators/service.decorator';
-import { InjectorService } from './injector.service';
-import { IScene, ISceneClass } from '../decorators/scene.model';
+import { Service } from '../decorators/service.decorator'
+import { InjectorService } from './injector.service'
+import { IScene, ISceneClass } from '../decorators/scene.model'
 
 @Service({
   static: true,

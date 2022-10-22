@@ -68,35 +68,35 @@ export class SceneClass implements IScene, IMole {
   render(x: number, y: number, width: number, height: number): Builder<unknown>[] {
     const space = new StageSpace<Sprite>()
 
-		for (const o of this.objects) {
-			if (o.hidden) continue
+    for (const o of this.objects) {
+      if (o.hidden) continue
 
-			for (const sprite of o.sprites) {
-				if (sprite.hidden) continue
+      for (const sprite of o.sprites) {
+        if (sprite.hidden) continue
 
-				const sx = o.x + sprite.x
-				const sy = o.y + sprite.y
-				const sz = o.z + sprite.z
+        const sx = o.x + sprite.x
+        const sy = o.y + sprite.y
+        const sz = o.z + sprite.z
 
-				if (sx >= x + width) continue
-				if (sx + sprite.width <= x) continue
-				if (sy >= y + height) continue
-				if (sy + sprite.height <= y) continue
+        if (sx >= x + width) continue
+        if (sx + sprite.width <= x) continue
+        if (sy >= y + height) continue
+        if (sy + sprite.height <= y) continue
 
-				space.add(sx, sy, sz, sprite)
-			}
-		}
+        space.add(sx, sy, sz, sprite)
+      }
+    }
 
     const items: Builder<unknown>[] = []
 
-		space.each((sx, sy, sz, sprite) => {
-			const _x = this.options.integerCoordinates ? Math.round(sx - x) : sx - x
-			const _y = this.options.integerCoordinates ? Math.round(sy - y) : sy - y
+    space.each((sx, sy, sz, sprite) => {
+      const _x = this.options.integerCoordinates ? Math.round(sx - x) : sx - x
+      const _y = this.options.integerCoordinates ? Math.round(sy - y) : sy - y
 
-			const item: Builder<unknown> = sprite.render(_x, _y)
+      const item: Builder<unknown> = sprite.render(_x, _y)
 
       if (item) items.push(item)
-		})
+    })
 
     return items
   }

@@ -27,17 +27,17 @@ export class API {
     //
   }
 
-  send(sygnal: SYGNAL.INIT_CONFIG, payload: IPlayConfig): void;
-  send(sygnal: SYGNAL.STAGE_RENDER, payload: IItem[]): void;
-  send(sygnal: SYGNAL.STAGE_UPDATE, payload: IPlayConfigStage): void;
+  send(sygnal: SYGNAL.INIT_CONFIG, payload: IPlayConfig): void
+  send(sygnal: SYGNAL.STAGE_RENDER, payload: IItem[]): void
+  send(sygnal: SYGNAL.STAGE_UPDATE, payload: IPlayConfigStage): void
   send(sygnal: SYGNAL, payload?: any): void {
     this.api.send(sygnal, payload)
   }
 
-  on(sygnal: SYGNAL.INIT_READY, f: () => void): () => void;
-  on(sygnal: SYGNAL.INIT_LOADED, f: (data: { images: { width: number, height: number }[] }) => void): () => void;
-  on(sygnal: SYGNAL.WINDOW_RESIZE, f: () => void): () => void;
-  on(sygnal: SYGNAL.EVENTS_UPDATE, f: (events: [ event: string, payload?: any][]) => void): () => void;
+  on(sygnal: SYGNAL.INIT_READY, f: () => void): () => void
+  on(sygnal: SYGNAL.INIT_LOADED, f: (data: { images: { width: number, height: number }[] }) => void): () => void
+  on(sygnal: SYGNAL.WINDOW_RESIZE, f: () => void): () => void
+  on(sygnal: SYGNAL.EVENTS_UPDATE, f: (events: [ event: string, payload?: any][]) => void): () => void
   on(sygnal: SYGNAL, f: (...args: any) => void): () => void {
     const listener: Listener = (event, data) => f(data)
 

@@ -34,14 +34,14 @@ export class SceneObject {
     }
   }
 
-	get center(): { x: number, y: number } {
-		return {
-			x: this.x + this.width / 2,
-			y: this.y + this.height / 2,
-		}
-	}
+  get center(): { x: number, y: number } {
+    return {
+      x: this.x + this.width / 2,
+      y: this.y + this.height / 2,
+    }
+  }
   
-	place(x: number, y: number, z: number, flagCenter = false): void {
+  place(x: number, y: number, z: number, flagCenter = false): void {
     if (!flagCenter) {
       this.x = x ?? this.x
       this.y = y ?? this.y
@@ -51,32 +51,32 @@ export class SceneObject {
       this.y = y !== undefined ? y - this.height / 2 : this.y
       this.z = z ?? this.z
     }
-	}
+  }
 
-	move(dx=0, dy=0, dz=0): void {
-		this.x += dx
-		this.y += dy
-		this.z += dz
-	}
+  move(dx=0, dy=0, dz=0): void {
+    this.x += dx
+    this.y += dy
+    this.z += dz
+  }
 
-	resize(width: number, height: number): void {
-		this.width = width ?? this.width
-		this.height = height ?? this.height
-	}
+  resize(width: number, height: number): void {
+    this.width = width ?? this.width
+    this.height = height ?? this.height
+  }
 
-	in(x: number, y: number, width: number, height: number): boolean {
-		if (this.x > x + width) return false
-		if (this.x + this.width < x) return false
-		if (this.y > y + height) return false
-		if (this.y + this.height < y) return false
+  in(x: number, y: number, width: number, height: number): boolean {
+    if (this.x > x + width) return false
+    if (this.x + this.width < x) return false
+    if (this.y > y + height) return false
+    if (this.y + this.height < y) return false
 
-		return true
-	}
+    return true
+  }
 
-	overlaps(o: SceneObject): boolean {
-		const xOverlap = this.x < o.x + o.width && this.x + this.width > o.x
-		const yOverlap = this.y < o.y + o.height && this.y + this.height > o.y
+  overlaps(o: SceneObject): boolean {
+    const xOverlap = this.x < o.x + o.width && this.x + this.width > o.x
+    const yOverlap = this.y < o.y + o.height && this.y + this.height > o.y
 
-		return xOverlap && yOverlap
-	}
+    return xOverlap && yOverlap
+  }
 }

@@ -3,9 +3,9 @@ export type DeepPartial<T> = T extends object ? {
 } : T
 
 export function ring(min: number, value: number, max: number): number {
-	const size = max - min
+  const size = max - min
 
-	return min + ((value % size + size) % size)
+  return min + ((value % size + size) % size)
 }
 
 export function deepFreeze(o: unknown): unknown {

@@ -25,24 +25,24 @@ export class ScenariosService {
   pop(): IScenario {
     const current = this.stack.pop()
 
-		if (current) current.scenario?.disable()
+    if (current) current.scenario?.disable()
 
-		const last = this.stack[this.stack.length - 1]
+    const last = this.stack[this.stack.length - 1]
 
     if (last) last.scenario?.enable(last?.data)
 
-		return current?.scenario
+    return current?.scenario
   }
 
   push(ScenarioClass: IScenarioClass, data?: any): void {
     const last = this.stack[this.stack.length - 1]
 
-		if (last) last.scenario?.disable()
+    if (last) last.scenario?.disable()
 
-		const scenario = this._inject(ScenarioClass)
+    const scenario = this._inject(ScenarioClass)
 
-		this.stack.push({ scenario, data })
-		
+    this.stack.push({ scenario, data })
+    
     const current = this.stack[this.stack.length - 1]
 
     if (current) current.scenario?.enable(data)
@@ -55,8 +55,8 @@ export class ScenariosService {
 
     const scenario = this._inject(ScenarioClass)
 
-		this.stack.push({ scenario, data })
-		
+    this.stack.push({ scenario, data })
+    
     const current = this.stack[this.stack.length - 1]
 
     if (current) current.scenario?.enable(data)

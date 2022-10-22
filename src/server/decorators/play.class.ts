@@ -1,7 +1,7 @@
-import { IPlay } from './play.model';
-import { Meta, PROP } from '../core/meta';
-import { ScenariosService } from '../services/scenarios.service';
-import { IMole } from '../../utils/mole.model';
+import { IPlay } from './play.model'
+import { Meta, PROP } from '../core/meta'
+import { ScenariosService } from '../services/scenarios.service'
+import { IMole } from '../../utils/mole.model'
 
 export class PlayClass implements IPlay, IMole {
   private _isInited = false

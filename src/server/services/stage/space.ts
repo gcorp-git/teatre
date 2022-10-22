@@ -1,7 +1,7 @@
 import { OrderedList } from './ordered-list'
 
 const ERROR = {
-	INCORRECT_SPACE_COORDINATES: 'INCORRECT_SPACE_COORDINATES',
+  INCORRECT_SPACE_COORDINATES: 'INCORRECT_SPACE_COORDINATES',
 }
 
 interface IHolder<T> {
@@ -16,61 +16,61 @@ export class StageSpace<T = unknown> {
   private map = new Map<T, IHolder<T>>()
 
   add(x: number, y: number, z: number, o: T): void {
-		if (isNaN(x) || isNaN(y) || isNaN(z)) throw ERROR.INCORRECT_SPACE_COORDINATES
+    if (isNaN(x) || isNaN(y) || isNaN(z)) throw ERROR.INCORRECT_SPACE_COORDINATES
 
-		this._getSetOrCreate(x, y, z).add(o)
+    this._getSetOrCreate(x, y, z).add(o)
 
-		const holder = { x, y, z, o }
+    const holder = { x, y, z, o }
 
-		this.map.set(o, holder)
-	}
+    this.map.set(o, holder)
+  }
 
   remove(o: T): void {
-		const holder = this.map.get(o)
+    const holder = this.map.get(o)
 
-		if (!holder) return
+    if (!holder) return
 
-		this.map.delete(o)
-		
-		const { x, y, z } = holder
+    this.map.delete(o)
+    
+    const { x, y, z } = holder
 
-		const set = this._getSetIfExists(x, y, z)
+    const set = this._getSetIfExists(x, y, z)
 
-		if (!set) return
+    if (!set) return
 
-		set.delete(o)
+    set.delete(o)
 
-		// todo: should it delete empty containers?
+    // todo: should it delete empty containers?
 
-		const layer = this.list.get(z)
-		const row = layer.get(y)
+    const layer = this.list.get(z)
+    const row = layer.get(y)
 
-		if (!set.size) row.remove(x)
-		if (!row.size) layer.remove(y)
-		if (!layer.size) this.list.remove(z)
-	}
+    if (!set.size) row.remove(x)
+    if (!row.size) layer.remove(y)
+    if (!layer.size) this.list.remove(z)
+  }
 
   clear(): void {
-		this.list.each((z, layer) => {
-			layer.each((y, row) => {
-				row.each((x, set) => {
-					set.forEach(o => this.map.delete(o))
-				})
-			})
-		})
+    this.list.each((z, layer) => {
+      layer.each((y, row) => {
+        row.each((x, set) => {
+          set.forEach(o => this.map.delete(o))
+        })
+      })
+    })
 
-		this.list.clear()
-	}
+    this.list.clear()
+  }
 
   each(f: (x: number, y: number, z: number, o: T) => void): void {
-		this.list.each((z, layer) => {
-			layer.each((y, row) => {
-				row.each((x, set) => {
-					set.forEach(o => f(x, y, z, o))
-				})
-			})
-		})
-	}
+    this.list.each((z, layer) => {
+      layer.each((y, row) => {
+        row.each((x, set) => {
+          set.forEach(o => f(x, y, z, o))
+        })
+      })
+    })
+  }
 
   private _getSetOrCreate(x: number, y: number, z: number): Set<T> {
     if (!this.list.has(z)) this.list.insert(z, new OrderedList<OrderedList<Set<T>>>())

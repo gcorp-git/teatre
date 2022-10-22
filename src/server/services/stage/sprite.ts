@@ -38,45 +38,45 @@ export class Sprite {
     return Object.keys(this.filters).length > 0
   }
 
-	set filter(value: string) {
+  set filter(value: string) {
     if (value !== undefined) {
       this.filters.filter = value
     } else {
       delete this.filters.filter
     }
-	}
+  }
 
-	set operation(value: string) {
+  set operation(value: string) {
     if (value !== undefined) {
       this.filters.operation = value
     } else {
       delete this.filters.operation
     }
-	}
+  }
 
-	set rotate(value: number) {
+  set rotate(value: number) {
     if (value !== undefined) {
       this.filters.rotate = value
     } else {
       delete this.filters.rotate
     }
-	}
+  }
 
-	set scale(value: { x: number, y: number }) {
+  set scale(value: { x: number, y: number }) {
     if (value !== undefined) {
       this.filters.scale = value
     } else {
       delete this.filters.scale
     }
-	}
+  }
 
-	set skew(value: { x: number, y: number }) {
+  set skew(value: { x: number, y: number }) {
     if (value !== undefined) {
       this.filters.skew = value
     } else {
       delete this.filters.skew
     }
-	}
+  }
 
   render(x: number, y: number): Builder<unknown> {
     const ri = this.source?.render()

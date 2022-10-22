@@ -1,6 +1,6 @@
-import { IMole } from '../../utils/mole.model';
-import { IDirector } from './director.model';
-import { IScenario } from './scenario.model';
+import { IMole } from '../../utils/mole.model'
+import { IDirector } from './director.model'
+import { IScenario } from './scenario.model'
 
 export class DirectorClass implements IDirector, IMole {
   private _isInited = false

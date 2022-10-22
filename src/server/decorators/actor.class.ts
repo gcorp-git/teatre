@@ -1,7 +1,7 @@
-import { IMole } from '../../utils/mole.model';
-import { SceneObject } from '../services/stage/scene-object';
-import { IActor } from './actor.model';
-import { IScenario } from './scenario.model';
+import { IMole } from '../../utils/mole.model'
+import { SceneObject } from '../services/stage/scene-object'
+import { IActor } from './actor.model'
+import { IScenario } from './scenario.model'
 
 export class ActorClass implements IActor, IMole {
   private _isInited = false

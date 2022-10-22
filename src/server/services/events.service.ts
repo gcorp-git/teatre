@@ -37,7 +37,7 @@ export class EventsService {
   on(event: WINDOW.FOCUS, listener: () => void): () => void
   on(event: WINDOW.BLUR, listener: () => void): () => void
   on(event: MOUSE | KEY | WINDOW, listener: (payload: any) => void): () => void {
-		this.subs.on(event, listener)
+    this.subs.on(event, listener)
 
     return () => this.subs.off(event, listener)
   }
