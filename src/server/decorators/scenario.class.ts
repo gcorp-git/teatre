@@ -1,5 +1,6 @@
 import { Meta, PROP } from '../core/meta'
 import { IScenario } from './scenario.model'
+import { IMole } from '../../utils/mole.model'
 import { IScene } from './scene.model'
 import { IDirectorClass, IDirector } from './director.model'
 import { IActorClass, IActor } from './actor.model'
@@ -7,12 +8,14 @@ import { ScenesService } from '../services/scenes.service'
 import { InjectorService } from '../services/injector.service'
 import { StageService } from '../services/stage.service'
 
-export class ScenarioClass implements IScenario {
+export class ScenarioClass implements IScenario, IMole {
+  private _isInited = false
   private _injector: InjectorService
   private _stage: StageService
   private _scene: IScene
   private _directors = new Map<IDirectorClass, IDirector>()
   private _actors = new Map<IActorClass, IActor>()
+  private _spies = new Map<(method: string, ...args: any) => void, () => void>()
 
   private _isEnabled = false
   private _isCameraAttached = false
@@ -47,8 +50,14 @@ export class ScenarioClass implements IScenario {
   }
 
   init() {
-    this._each(this._directors, 'init', this)
-    this._each(this._actors, 'init', this)
+    if (this._isInited) return
+
+    this._isInited = true
+    
+    if (this._directors.size) this._each(this._directors, 'init', this)
+    if (this._actors.size) this._each(this._actors, 'init', this)
+
+    if (this._spies.size) this._leak('init', this)
 
     this.onInit()
   }
@@ -58,13 +67,15 @@ export class ScenarioClass implements IScenario {
 
     this._isEnabled = true
 
-    this._each(this._directors, 'enable')
-    this._each(this._actors, 'enable')
+    if (this._directors.size) this._each(this._directors, 'enable')
+    if (this._actors.size) this._each(this._actors, 'enable')
 
     if (this._scene) {
       this._isCameraAttached = true
       this._stage.camera.attach(this._scene)
     }
+
+    if (this._spies.size) this._leak('enable', data)
 
     this.onEnable(data)
   }
@@ -74,13 +85,15 @@ export class ScenarioClass implements IScenario {
 
     this._isEnabled = false
 
+    if (this._directors.size) this._each(this._directors, 'disable')
+    if (this._actors.size) this._each(this._actors, 'disable')
+
     if (this._isCameraAttached) {
       this._isCameraAttached = false
       this._stage.camera.detach()
     }
 
-    this._each(this._directors, 'disable')
-    this._each(this._actors, 'disable')
+    if (this._spies.size) this._leak('disable')
 
     this.onDisable()
   }
@@ -88,8 +101,10 @@ export class ScenarioClass implements IScenario {
   frame(delta: number): void {
     if (!this._isEnabled) return
 
-    this._each(this._directors, 'frame', delta)
-    this._each(this._actors, 'frame', delta)
+    if (this._directors.size) this._each(this._directors, 'frame', delta)
+    if (this._actors.size) this._each(this._actors, 'frame', delta)
+
+    if (this._spies.size) this._leak('frame', delta)
 
     this.onFrame(delta)
   }
@@ -97,20 +112,28 @@ export class ScenarioClass implements IScenario {
   update(): void {
     if (!this._isEnabled) return
 
-    this._each(this._directors, 'update')
-    this._each(this._actors, 'update')
+    if (this._directors.size) this._each(this._directors, 'update')
+    if (this._actors.size) this._each(this._actors, 'update')
+
+    if (this._spies.size) this._leak('update')
 
     this.onUpdate()
   }
 
   destroy(): void {
+    if (!this._isInited) return
+
+    this._isInited = false
+
     this.disable()
 
-    this._each(this._directors, 'destroy')
-    this._each(this._actors, 'destroy')
+    if (this._directors.size) this._each(this._directors, 'destroy')
+    if (this._actors.size) this._each(this._actors, 'destroy')
 
     this._directors.clear()
     this._actors.clear()
+
+    if (this._spies.size) this._leak('destroy')
 
     this.onDestroy()
   }
@@ -123,6 +146,18 @@ export class ScenarioClass implements IScenario {
     return this._actors.get(Class) as InstanceType<T>
   }
 
+  spy(agent: (method: string, ...args: any) => void): () => void {
+    let off = this._spies.get(agent)
+
+    if (off) return off
+
+    off = () => this._spies.delete(agent)
+
+    this._spies.set(agent, off)
+
+    return off
+  }
+
   onInit(): void {}
   onEnable(data: any): void {}
   onDisable(): void {}
@@ -130,11 +165,15 @@ export class ScenarioClass implements IScenario {
   onUpdate(): void {}
   onDestroy(): void {}
 
-  private _each(map: Map<any, any>, action: string, ...args: any): void {
-    if (!map.size) return
-
+  private _each(map: Map<any, any>, method: string, ...args: any): void {
     for (const [key, value] of map) {
-      value[action](...args)
+      value[method](...args)
+    }
+  }
+
+  private _leak(method: string, ...args: any): void {
+    for (const [agent, off] of this._spies) {
+      agent(method, ...args)
     }
   }
 }

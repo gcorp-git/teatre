@@ -2,6 +2,7 @@ export const PROP = {
   TYPE: Symbol(),
   CONFIG: Symbol(),
   INJECTOR: Symbol(),
+  CONNECT: Symbol(),
 }
 
 export enum TYPE {
@@ -13,30 +14,26 @@ export enum TYPE {
   ACTOR,
 }
 
-interface IClass {
-  new(...args: any): object
-}
-
 export class Meta {
-  private static map = new Map<IClass, Map<symbol, any>>()
+  private static map = new Map<any, Map<symbol, any>>()
 
-  static has(Class: IClass): boolean {
-    return Meta.map.has(Class)
+  static has(o: any): boolean {
+    return Meta.map.has(o)
   }
 
-  static get(Class: IClass, key: symbol): any {
-    let map = Meta.map.get(Class)
+  static get(o: any, key: symbol): any {
+    let map = Meta.map.get(o)
 
     return map ? map.get(key) : undefined
   }
 
-  static set(Class: IClass, key: symbol, value: any): void {
-    let map = Meta.map.get(Class)
+  static set(o: any, key: symbol, value: any): void {
+    let map = Meta.map.get(o)
 
     if (!map) {
       map = new Map<symbol, any>()
 
-      Meta.map.set(Class, map)
+      Meta.map.set(o, map)
     }
 
     map.set(key, value)

@@ -41,6 +41,18 @@ export class InjectorService {
     const dependencies = Reflect.getMetadata('design:paramtypes', Class) ?? []
     const args = dependencies.map(Dependency => this.inject(Dependency))
     
-    return new Class(...args)
+    const instance = new Class(...args)
+
+    if (args.length) {
+      for (const arg of args) {
+        const connect = Meta.get(arg, PROP.CONNECT)
+
+        if (!connect) continue
+
+        connect(instance)
+      }
+    }
+
+    return instance
   }
 }
