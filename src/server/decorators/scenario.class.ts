@@ -5,32 +5,39 @@ import { IDirectorClass, IDirector } from './director.model'
 import { IActorClass, IActor } from './actor.model'
 import { ScenesService } from '../services/scenes.service'
 import { InjectorService } from '../services/injector.service'
+import { StageService } from '../services/stage.service'
 
 export class ScenarioClass implements IScenario {
+  private _injector: InjectorService
+  private _stage: StageService
   private _scene: IScene
   private _directors = new Map<IDirectorClass, IDirector>()
   private _actors = new Map<IActorClass, IActor>()
 
   private _isEnabled = false
+  private _isCameraAttached = false
 
   constructor() {
     const config = Meta.get(this.constructor as any, PROP.CONFIG)
-    const injector = Meta.get(this.constructor as any, PROP.INJECTOR) as InjectorService
-    const scenes = injector.inject<ScenesService>(ScenesService)
+
+    this._injector = Meta.get(this.constructor as any, PROP.INJECTOR) as InjectorService
+    this._stage = this._injector.inject(StageService)
 
     if (config?.scene) {
+      const scenes = this._injector.inject<ScenesService>(ScenesService)
+  
       this._scene = scenes.get(config.scene)
     }
     
     if (config.directors?.length) {
       for (const DirectorClass of config.directors) {
-        this._directors.set(DirectorClass, injector.inject<IDirector>(DirectorClass))
+        this._directors.set(DirectorClass, this._injector.inject<IDirector>(DirectorClass))
       }
     }
 
     if (config.actors?.length) {
       for (const ActorClass of config.actors) {
-        this._actors.set(ActorClass, injector.inject<IActor>(ActorClass))
+        this._actors.set(ActorClass, this._injector.inject<IActor>(ActorClass))
       }
     }
   }
@@ -40,17 +47,8 @@ export class ScenarioClass implements IScenario {
   }
 
   init() {
-    if (this._directors.size) {
-      for (const [DirectorClass, director] of this._directors) {
-        director.init(this)
-      }
-    }
-
-    if (this._actors.size) {
-      for (const [ActorClass, actor] of this._actors) {
-        actor.init(this)
-      }
-    }
+    this._each(this._directors, 'init', this)
+    this._each(this._actors, 'init', this)
 
     this.onInit()
   }
@@ -60,16 +58,12 @@ export class ScenarioClass implements IScenario {
 
     this._isEnabled = true
 
-    if (this._directors.size) {
-      for (const [DirectorClass, director] of this._directors) {
-        director.enable()
-      }
-    }
+    this._each(this._directors, 'enable')
+    this._each(this._actors, 'enable')
 
-    if (this._actors.size) {
-      for (const [ActorClass, actor] of this._actors) {
-        actor.enable()
-      }
+    if (this._scene) {
+      this._isCameraAttached = true
+      this._stage.camera.attach(this._scene)
     }
 
     this.onEnable(data)
@@ -80,17 +74,13 @@ export class ScenarioClass implements IScenario {
 
     this._isEnabled = false
 
-    if (this._directors.size) {
-      for (const [DirectorClass, director] of this._directors) {
-        director.disable()
-      }
+    if (this._isCameraAttached) {
+      this._isCameraAttached = false
+      this._stage.camera.detach()
     }
 
-    if (this._actors.size) {
-      for (const [ActorClass, actor] of this._actors) {
-        actor.disable()
-      }
-    }
+    this._each(this._directors, 'disable')
+    this._each(this._actors, 'disable')
 
     this.onDisable()
   }
@@ -98,17 +88,8 @@ export class ScenarioClass implements IScenario {
   frame(delta: number): void {
     if (!this._isEnabled) return
 
-    if (this._directors.size) {
-      for (const [DirectorClass, director] of this._directors) {
-        director.frame(delta)
-      }
-    }
-
-    if (this._actors.size) {
-      for (const [ActorClass, actor] of this._actors) {
-        actor.frame(delta)
-      }
-    }
+    this._each(this._directors, 'frame', delta)
+    this._each(this._actors, 'frame', delta)
 
     this.onFrame(delta)
   }
@@ -116,17 +97,8 @@ export class ScenarioClass implements IScenario {
   update(): void {
     if (!this._isEnabled) return
 
-    if (this._directors.size) {
-      for (const [DirectorClass, director] of this._directors) {
-        director.update()
-      }
-    }
-
-    if (this._actors.size) {
-      for (const [ActorClass, actor] of this._actors) {
-        actor.update()
-      }
-    }
+    this._each(this._directors, 'update')
+    this._each(this._actors, 'update')
 
     this.onUpdate()
   }
@@ -134,20 +106,10 @@ export class ScenarioClass implements IScenario {
   destroy(): void {
     this.disable()
 
-    if (this._directors.size) {
-      for (const [DirectorClass, director] of this._directors) {
-        director.destroy()
-      }
-    }
+    this._each(this._directors, 'destroy')
+    this._each(this._actors, 'destroy')
 
     this._directors.clear()
-
-    if (this._actors.size) {
-      for (const [ActorClass, actor] of this._actors) {
-        actor.destroy()
-      }
-    }
-
     this._actors.clear()
 
     this.onDestroy()
@@ -167,4 +129,12 @@ export class ScenarioClass implements IScenario {
   onFrame(delta: number): void {}
   onUpdate(): void {}
   onDestroy(): void {}
+
+  private _each(map: Map<any, any>, action: string, ...args: any): void {
+    if (!map.size) return
+
+    for (const [key, value] of map) {
+      value[action](...args)
+    }
+  }
 }
