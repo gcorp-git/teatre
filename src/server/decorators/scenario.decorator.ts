@@ -10,6 +10,7 @@ export function Scenario(config?: {
   scene?: ISceneClass
   directors?: IDirectorClass[]
   actors?: IActorClass[]
+  extras?: IActorClass[]
 }) {
   return function(Class: IScenarioClass) {
     Meta.set(Class, PROP.TYPE, TYPE.SCENARIO)

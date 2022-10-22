@@ -41,7 +41,7 @@ export class SceneObject {
     }
   }
   
-  place(x: number, y: number, z: number, flagCenter = false): void {
+  place(x?: number, y?: number, z?: number, flagCenter = false): void {
     if (!flagCenter) {
       this.x = x ?? this.x
       this.y = y ?? this.y
@@ -59,7 +59,7 @@ export class SceneObject {
     this.z += dz
   }
 
-  resize(width: number, height: number): void {
+  resize(width?: number, height?: number): void {
     this.width = width ?? this.width
     this.height = height ?? this.height
   }

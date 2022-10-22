@@ -7,6 +7,7 @@ import { IActorClass, IActor } from './actor.model'
 import { ScenesService } from '../services/scenes.service'
 import { InjectorService } from '../services/injector.service'
 import { StageService } from '../services/stage.service'
+import { Extras } from './scenario/extras'
 
 export class ScenarioClass implements IScenario, IMole {
   private _isInited = false
@@ -15,6 +16,7 @@ export class ScenarioClass implements IScenario, IMole {
   private _scene: IScene
   private _directors = new Map<IDirectorClass, IDirector>()
   private _actors = new Map<IActorClass, IActor>()
+  private _extras = new Map<IActorClass, Extras<IActor>>()
   private _spies = new Map<(method: string, ...args: any) => void, () => void>()
 
   private _isEnabled = false
@@ -43,6 +45,14 @@ export class ScenarioClass implements IScenario, IMole {
         this._actors.set(ActorClass, this._injector.inject<IActor>(ActorClass))
       }
     }
+
+    if (config.extras?.length) {
+      for (const ExtraClass of config.extras) {
+        this._extras.set(ExtraClass, new Extras<IActor>(this, this._injector, ExtraClass))
+      }
+    }
+
+    Object.freeze(this._extras)
   }
 
   get scene() {
@@ -54,8 +64,9 @@ export class ScenarioClass implements IScenario, IMole {
 
     this._isInited = true
     
-    if (this._directors.size) this._each(this._directors, 'init', this)
-    if (this._actors.size) this._each(this._actors, 'init', this)
+    if (this._directors.size) this._withDirectors('init', this)
+    if (this._actors.size) this._withActors('init', this)
+    if (this._extras.size) this._withExtras('init', this)
 
     if (this._spies.size) this._leak('init', this)
 
@@ -67,8 +78,9 @@ export class ScenarioClass implements IScenario, IMole {
 
     this._isEnabled = true
 
-    if (this._directors.size) this._each(this._directors, 'enable')
-    if (this._actors.size) this._each(this._actors, 'enable')
+    if (this._directors.size) this._withDirectors('enable')
+    if (this._actors.size) this._withActors('enable')
+    if (this._extras.size) this._withExtras('enable')
 
     if (this._scene) {
       this._isCameraAttached = true
@@ -85,8 +97,9 @@ export class ScenarioClass implements IScenario, IMole {
 
     this._isEnabled = false
 
-    if (this._directors.size) this._each(this._directors, 'disable')
-    if (this._actors.size) this._each(this._actors, 'disable')
+    if (this._directors.size) this._withDirectors('disable')
+    if (this._actors.size) this._withActors('disable')
+    if (this._extras.size) this._withExtras('disable')
 
     if (this._isCameraAttached) {
       this._isCameraAttached = false
@@ -101,8 +114,9 @@ export class ScenarioClass implements IScenario, IMole {
   frame(delta: number): void {
     if (!this._isEnabled) return
 
-    if (this._directors.size) this._each(this._directors, 'frame', delta)
-    if (this._actors.size) this._each(this._actors, 'frame', delta)
+    if (this._directors.size) this._withDirectors('frame', delta)
+    if (this._actors.size) this._withActors('frame', delta)
+    if (this._extras.size) this._withExtras('frame', delta)
 
     if (this._spies.size) this._leak('frame', delta)
 
@@ -112,8 +126,9 @@ export class ScenarioClass implements IScenario, IMole {
   update(): void {
     if (!this._isEnabled) return
 
-    if (this._directors.size) this._each(this._directors, 'update')
-    if (this._actors.size) this._each(this._actors, 'update')
+    if (this._directors.size) this._withDirectors('update')
+    if (this._actors.size) this._withActors('update')
+    if (this._extras.size) this._withExtras('update')
 
     if (this._spies.size) this._leak('update')
 
@@ -127,8 +142,9 @@ export class ScenarioClass implements IScenario, IMole {
 
     this.disable()
 
-    if (this._directors.size) this._each(this._directors, 'destroy')
-    if (this._actors.size) this._each(this._actors, 'destroy')
+    if (this._directors.size) this._withDirectors('destroy')
+    if (this._actors.size) this._withActors('destroy')
+    if (this._extras.size) this._withExtras('destroy')
 
     this._directors.clear()
     this._actors.clear()
@@ -144,6 +160,10 @@ export class ScenarioClass implements IScenario, IMole {
 
   actor<T extends IActorClass>(Class: T): InstanceType<T> {
     return this._actors.get(Class) as InstanceType<T>
+  }
+
+  extras<T extends IActorClass>(Class: T): Extras<InstanceType<T>> {
+    return this._extras.get(Class) as Extras<InstanceType<T>>
   }
 
   spy(agent: (method: string, ...args: any) => void): () => void {
@@ -165,9 +185,21 @@ export class ScenarioClass implements IScenario, IMole {
   onUpdate(): void {}
   onDestroy(): void {}
 
-  private _each(map: Map<any, any>, method: string, ...args: any): void {
-    for (const [key, value] of map) {
-      value[method](...args)
+  private _withDirectors(method: string, ...args: any): void {
+    for (const [DirectorClass, director] of this._directors) {
+      director[method](...args)
+    }
+  }
+
+  private _withActors(method: string, ...args: any): void {
+    for (const [ActorClass, actor] of this._actors) {
+      actor[method](...args)
+    }
+  }
+
+  private _withExtras(method: string, ...args: any): void {
+    for (const [ExtraClass, extras] of this._extras) {
+      extras.each(extra => extra[method](...args), true)
     }
   }
 

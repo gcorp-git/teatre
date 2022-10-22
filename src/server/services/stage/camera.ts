@@ -38,7 +38,7 @@ export class Camera {
     delete this.state.scene
   }
 
-  place(x: number, y: number, flagCenter = false): void {
+  place(x?: number, y?: number, flagCenter = false): void {
     if (!flagCenter) {
       this.x = x ?? this.x
       this.y = y ?? this.y
