@@ -1,11 +1,26 @@
+import { SceneObject } from '../services/stage/scene-object';
 import { IActor } from './actor.model';
 import { IScenario } from './scenario.model';
 
 export class ActorClass implements IActor {
+  private _isInited = false
   private _isEnabled = false
   private _scenario: IScenario
+  private _object: SceneObject
+
+  get object(): SceneObject {
+    return this._object
+  }
+
+  set object(object: SceneObject) {
+    if (this._object) return
+    if (this._isInited) return
+
+    this._object = object
+  }
 
   init(scenario: IScenario): void {
+    this._isInited = true
     this._scenario = scenario
 
     this.onInit(scenario)
@@ -16,6 +31,8 @@ export class ActorClass implements IActor {
 
     this._isEnabled = true
 
+    if (this._object) this._scenario.scene.add(this._object)
+
     this.onEnable()
   }
 
@@ -23,6 +40,8 @@ export class ActorClass implements IActor {
     if (!this._isEnabled) return
 
     this._isEnabled = false
+
+    if (this._object) this._scenario.scene.remove(this._object)
 
     this.onDisable()
   }
@@ -41,6 +60,8 @@ export class ActorClass implements IActor {
 
   destroy(): void {
     this.disable()
+
+    this._isInited = false
 
     this.onDestroy()
   }

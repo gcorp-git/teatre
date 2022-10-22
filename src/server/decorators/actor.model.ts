@@ -1,12 +1,15 @@
 import { IService } from './service.model'
 import { IScenario } from './scenario.model'
 import { IScene } from './scene.model'
+import { SceneObject } from '../services/stage/scene-object'
 
 export interface IActorClass {
   new(...args: IService[]): IActor
 }
 
 export interface IActor {
+  object: SceneObject
+
   init(scenario: IScenario): void
   enable(): void
   disable(): void
