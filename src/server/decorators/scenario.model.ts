@@ -1,5 +1,7 @@
 import { IService } from './service.model'
 import { IScene } from './scene.model'
+import { IDirector, IDirectorClass } from './director.model'
+import { IActor, IActorClass } from './actor.model'
 
 export interface IScenarioClass {
   new(...args: IService[]): IScenario
@@ -14,6 +16,8 @@ export interface IScenario {
   frame(delta: number): void
   update(): void
   destroy(): void
+  director<T extends IDirectorClass>(Class: T): InstanceType<T>
+  actor<T extends IActorClass>(Class: T): InstanceType<T>
   
   onInit(): void
   onEnable(data: any): void

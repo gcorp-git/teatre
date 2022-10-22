@@ -39,14 +39,6 @@ export class ScenarioClass implements IScenario {
     return this._scene
   }
 
-  get directors() {
-    return this._directors
-  }
-
-  get actors() {
-    return this._actors
-  }
-
   init() {
     if (this._directors.size) {
       for (const [DirectorClass, director] of this._directors) {
@@ -159,6 +151,14 @@ export class ScenarioClass implements IScenario {
     this._actors.clear()
 
     this.onDestroy()
+  }
+
+  director<T extends IDirectorClass>(Class: T): InstanceType<T> {
+    return this._directors.get(Class) as InstanceType<T>
+  }
+
+  actor<T extends IActorClass>(Class: T): InstanceType<T> {
+    return this._actors.get(Class) as InstanceType<T>
   }
 
   onInit(): void {}
