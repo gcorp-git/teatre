@@ -28,16 +28,18 @@ export class EventsService {
     this.subs = new Subscriptions()
   }
 
-  on(event: MOUSE.DOWN, listener: (payload: { x: number, y: number }) => void): void
-  on(event: MOUSE.UP, listener: (payload: { x: number, y: number }) => void): void
-  on(event: MOUSE.MOVE, listener: (payload: { x: number, y: number }) => void): void
-  on(event: MOUSE.CLICK, listener: (payload: { x: number, y: number }) => void): void
-  on(event: KEY.DOWN, listener: (payload: { code: string, alt: boolean, ctrl: boolean, shift: boolean, meta: boolean }) => void): void
-  on(event: KEY.UP, listener: (payload: { code: string, alt: boolean, ctrl: boolean, shift: boolean, meta: boolean }) => void): void
-  on(event: WINDOW.FOCUS, listener: () => void): void
-  on(event: WINDOW.BLUR, listener: () => void): void
-  on(event: MOUSE | KEY | WINDOW, listener: (payload: any) => void): void {
+  on(event: MOUSE.DOWN, listener: (payload: { x: number, y: number }) => void): () => void
+  on(event: MOUSE.UP, listener: (payload: { x: number, y: number }) => void): () => void
+  on(event: MOUSE.MOVE, listener: (payload: { x: number, y: number }) => void): () => void
+  on(event: MOUSE.CLICK, listener: (payload: { x: number, y: number }) => void): () => void
+  on(event: KEY.DOWN, listener: (payload: { code: string, alt: boolean, ctrl: boolean, shift: boolean, meta: boolean }) => void): () => void
+  on(event: KEY.UP, listener: (payload: { code: string, alt: boolean, ctrl: boolean, shift: boolean, meta: boolean }) => void): () => void
+  on(event: WINDOW.FOCUS, listener: () => void): () => void
+  on(event: WINDOW.BLUR, listener: () => void): () => void
+  on(event: MOUSE | KEY | WINDOW, listener: (payload: any) => void): () => void {
 		this.subs.on(event, listener)
+
+    return () => this.subs.off(event, listener)
   }
 
   off(event: MOUSE.DOWN, listener: (payload: { x: number, y: number }) => void): void
