@@ -1,7 +1,7 @@
 import { IService } from './service.model'
 import { IScene } from './scene.model'
-import { IDirector, IDirectorClass } from './director.model'
-import { IActor, IActorClass } from './actor.model'
+import { IDirectorClass } from './director.model'
+import { IActorClass } from './actor.model'
 
 export interface IScenarioClass {
   new(...args: IService[]): IScenario
